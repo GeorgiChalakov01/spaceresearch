@@ -4,11 +4,11 @@ cd backend
 ./rebuildImage.sh
 cd ..
 
-docker stop teamforger-backend-1
-docker rm teamforger-backend-1
+docker stop $BE_CONTAINER_NAME
+docker rm $BE_CONTAINER_NAME
 
 docker run -d \
-	--name teamforger-backend-1 \
+	--name $BE_CONTAINER_NAME \
 	-e DB_USER=$DB_USER \
 	-e DB_PORT=$DB_PORT \
 	-e DB_PWD=$DB_PWD \
@@ -24,6 +24,6 @@ docker run -d \
 	-e LETSENCRYPT_HOST=$BE_HOST \
 	--network net \
 	-p "$BE_PORT:$BE_PORT" \
-	teamforger-backend
+	$BE_IMAGE_NAME
 
-docker logs --follow teamforger-backend-1
+docker logs --follow $BE_CONTAINER_NAME

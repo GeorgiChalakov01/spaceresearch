@@ -2,8 +2,8 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY app/teamforger .
+COPY app/app .
 
 EXPOSE 8080
 
-CMD ["./teamforger"]
+CMD ["./app"]

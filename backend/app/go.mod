@@ -1,4 +1,4 @@
-module teamforger/backend
+module spaceresearch/backend
 
 go 1.24.3
 

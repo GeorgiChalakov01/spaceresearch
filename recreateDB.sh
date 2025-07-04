@@ -1,7 +1,7 @@
 source ./config.sh
 
-docker stop teamforger-db-1
-docker rm teamforger-db-1
+docker stop $DB_CONTAINER_NAME
+docker rm $DB_CONTAINER_NAME
 
 cd db
 ./rebuild.sh
@@ -14,5 +14,5 @@ docker run -d \
 	-e POSTGRES_USER=$DB_USER \
 	-e POSTGRES_DB=$DB_SCHEMA \
 	--network net \
-	-v /home/gchalakov/services/teamforger/db/pgdata:/var/lib/postgresql/ \
-	teamforger-postgres
+	-v /home/gchalakov/services/spaceresearch/db/pgdata:/var/lib/postgresql/ \
+	spaceresearch-postgres
