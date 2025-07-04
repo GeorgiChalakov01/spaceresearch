@@ -1,4 +1,4 @@
-package uploadCV
+package uploadDocument
 
 import (
 	"spaceresearch/backend/core"

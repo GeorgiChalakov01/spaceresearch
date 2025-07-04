@@ -1,11 +1,11 @@
-package buildTeam
+package discuss
 
 import (
     "spaceresearch/backend/core"
-    "spaceresearch/backend/pages/buildTeam/sections/chat"
+    "spaceresearch/backend/pages/discuss/sections/chat"
     "spaceresearch/backend/pages/layout"
 )
 
-templ BuildTeam(user core.User) {
+templ Discuss(user core.User) {
     @layout.Base(true, user, chat.Chat(user))
 }

@@ -1,4 +1,4 @@
-package buildTeam
+package discuss
 
 import (
 	// "spaceresearch/backend/core"

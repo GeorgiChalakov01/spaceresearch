@@ -1,11 +1,11 @@
-package uploadCV
+package uploadDocument
 
 import (
     "spaceresearch/backend/core"
-    "spaceresearch/backend/pages/uploadCV/sections/form"
+    "spaceresearch/backend/pages/uploadDocument/sections/form"
     "spaceresearch/backend/pages/layout"
 )
 
-templ UploadCV(user core.User) {
+templ UploadDocument(user core.User) {
     @layout.Base(true, user, form.Form(user))
 }

@@ -59,12 +59,12 @@ func Welcome(user core.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><div class=\"d-grid gap-3\"><a href=\"/uploadCV\" class=\"btn btn-lg btn-primary\"><i class=\"bi bi-plus-circle me-2\"></i>Upload your CV</a> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><div class=\"d-grid gap-3\"><a href=\"/uploadDocument\" class=\"btn btn-lg btn-primary\"><i class=\"bi bi-plus-circle me-2\"></i>Upload a Document</a> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if user.IsAdmin == true {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"/buildTeam\" class=\"btn btn-lg btn-outline-primary\"><i class=\"bi bi-people me-2\"></i>Build a team</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"/discuss\" class=\"btn btn-lg btn-outline-primary\"><i class=\"bi bi-people me-2\"></i>Discuss</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

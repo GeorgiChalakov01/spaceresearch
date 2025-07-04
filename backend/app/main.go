@@ -11,8 +11,8 @@ import (
 	"spaceresearch/backend/pages/signup"
 	"spaceresearch/backend/pages/signin"
 	"spaceresearch/backend/pages/home"
-	"spaceresearch/backend/pages/uploadCV"
-	"spaceresearch/backend/pages/buildTeam"
+	"spaceresearch/backend/pages/uploadDocument"
+	"spaceresearch/backend/pages/discuss"
 )
 
 func main() {
@@ -143,11 +143,11 @@ func main() {
 		http.Redirect(w, r, "/signin?success=signedOut", http.StatusSeeOther)
 	}))
 	
-	http.HandleFunc("/uploadCV", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
-		templ.Handler(uploadCV.UploadCV(user)).ServeHTTP(w, r)
+	http.HandleFunc("/uploadDocument", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
+		templ.Handler(uploadDocument.UploadDocument(user)).ServeHTTP(w, r)
 	}))
 	
-	http.HandleFunc("/process-uploadCV", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
+	http.HandleFunc("/process-uploadDocument", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
 		fileContents, err := core.ReceiveFile(w, r)
 		if err != nil {
 			http.Redirect(w, r, "/home?error=fileUploadError", http.StatusSeeOther)
@@ -161,21 +161,17 @@ func main() {
 		}
 
 		user.CV = markdownContent
-		if err := uploadCV.StoreUserCV(conn, user); err != nil {
+		if err := uploadDocument.StoreUserCV(conn, user); err != nil {
 			fmt.Println(err)
-			http.Redirect(w, r, "/home?error=cvStorageFailed", http.StatusSeeOther)
+			http.Redirect(w, r, "/home?error=documentStorageFailed", http.StatusSeeOther)
 			return
 		}
 
-		http.Redirect(w, r, "/home?success=CVConverted", http.StatusSeeOther)
+		http.Redirect(w, r, "/home?success=DocumentConverted", http.StatusSeeOther)
 	}))
 
-	http.HandleFunc("/buildTeam", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
-		if user.IsAdmin != true {
-			http.Redirect(w, r, "/home?error=notAdmin", http.StatusSeeOther)
-			return
-		}
-		templ.Handler(buildTeam.BuildTeam(user)).ServeHTTP(w, r)
+	http.HandleFunc("/discuss", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {
+		templ.Handler(discuss.Discuss(user)).ServeHTTP(w, r)
 	}))
 
 	http.HandleFunc("/ws", core.WithAuthorization(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn, user core.User) {

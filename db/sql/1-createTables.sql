@@ -13,13 +13,14 @@ CREATE TABLE users (
 	cv TEXT
 );
 
-CREATE TABLE cv_chunks (
+CREATE TABLE document_chunks (
     id SERIAL PRIMARY KEY,
+    document_name TEXT NOT NULL,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     chunk TEXT NOT NULL,
     embedding vector(768) NOT NULL
 );
 
-CREATE INDEX ON cv_chunks USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON document_chunks USING hnsw (embedding vector_cosine_ops);
 
 COMMIT;
