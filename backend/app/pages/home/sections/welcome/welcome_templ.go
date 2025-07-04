@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
+	"spaceresearch/backend/core"
 )
 
 func Welcome(user core.User) templ.Component {

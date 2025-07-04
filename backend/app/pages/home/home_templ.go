@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
-	"teamforger/backend/pages/home/sections/welcome"
-	"teamforger/backend/pages/layout"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/home/sections/welcome"
+	"spaceresearch/backend/pages/layout"
 )
 
 func Home(user core.User) templ.Component {

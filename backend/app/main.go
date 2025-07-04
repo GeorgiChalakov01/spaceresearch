@@ -7,12 +7,12 @@ import (
 	
 	"github.com/a-h/templ"
 	"github.com/jackc/pgx/v5"
-	"teamforger/backend/core"
-	"teamforger/backend/pages/signup"
-	"teamforger/backend/pages/signin"
-	"teamforger/backend/pages/home"
-	"teamforger/backend/pages/uploadCV"
-	"teamforger/backend/pages/buildTeam"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/signup"
+	"spaceresearch/backend/pages/signin"
+	"spaceresearch/backend/pages/home"
+	"spaceresearch/backend/pages/uploadCV"
+	"spaceresearch/backend/pages/buildTeam"
 )
 
 func main() {

@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
-	"teamforger/backend/pages/layout"
-	"teamforger/backend/pages/signup/sections/signupForm"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/layout"
+	"spaceresearch/backend/pages/signup/sections/signupForm"
 )
 
 func SignUp() templ.Component {

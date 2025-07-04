@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
-	"teamforger/backend/pages/layout"
-	"teamforger/backend/pages/uploadCV/sections/form"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/layout"
+	"spaceresearch/backend/pages/uploadCV/sections/form"
 )
 
 func UploadCV(user core.User) templ.Component {

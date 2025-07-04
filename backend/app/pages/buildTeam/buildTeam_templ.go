@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
-	"teamforger/backend/pages/buildTeam/sections/chat"
-	"teamforger/backend/pages/layout"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/buildTeam/sections/chat"
+	"spaceresearch/backend/pages/layout"
 )
 
 func BuildTeam(user core.User) templ.Component {

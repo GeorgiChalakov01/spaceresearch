@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"context"
 	"github.com/jackc/pgx/v5"
-	"teamforger/backend/core"
+	"spaceresearch/backend/core"
 )
 
 func CreateUser (conn *pgx.Conn, user core.User) error {

@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"teamforger/backend/core"
-	"teamforger/backend/pages/layout"
-	"teamforger/backend/pages/signin/sections/signinForm"
+	"spaceresearch/backend/core"
+	"spaceresearch/backend/pages/layout"
+	"spaceresearch/backend/pages/signin/sections/signinForm"
 )
 
 func SignIn() templ.Component {
