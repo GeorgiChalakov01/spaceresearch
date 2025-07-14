@@ -1,0 +1,15 @@
+services:
+  backend:
+    image: spaceresearch
+    env_file:
+      - ./vars.env
+    networks:
+      - spaceresearch_net
+      - net
+    ports:
+      - "8080:8080"
+networks:
+  spaceresearch_net:
+    external: false
+  net:
+    external: true
