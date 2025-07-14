@@ -1,0 +1,10 @@
+package err
+
+import (
+	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
+	"github.com/GeorgiChalakov01/spaceresearch/pages/err/components/message"
+)
+
+templ Error() {
+	@base.Base("Error", message.Message())
+}
