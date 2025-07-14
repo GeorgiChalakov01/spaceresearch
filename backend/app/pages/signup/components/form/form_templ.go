@@ -31,7 +31,7 @@ func Form() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"container\"><div class=\"row justify-content-center\"><div class=\"col-7\"><form action=\"/signup/process\"><div class=\"mb-3\"><label for=\"Email\" class=\"form-label\">Email address</label> <input type=\"email\" class=\"form-control\" id=\"Email\" name=\"email\" aria-describedby=\"emailHelp\"><div id=\"emailHelp\" class=\"form-text\">Email address</div></div><div class=\"mb-3\"><label for=\"Password\" class=\"form-label\">Password</label> <input type=\"password\" class=\"form-control\" id=\"Password\" name=\"password\"></div><button type=\"submit\" class=\"btn btn-primary\">SignUp</button></form></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"container\"><div class=\"row justify-content-center\"><div class=\"col-7\"><form action=\"/signup-process\"><div class=\"mb-3\"><label for=\"Email\" class=\"form-label\">Email address</label> <input type=\"email\" class=\"form-control\" id=\"Email\" name=\"email\" aria-describedby=\"emailHelp\"><div id=\"emailHelp\" class=\"form-text\">Email address</div></div><div class=\"mb-3\"><label for=\"Password\" class=\"form-label\">Password</label> <input type=\"password\" class=\"form-control\" id=\"Password\" name=\"password\"></div><button type=\"submit\" class=\"btn btn-primary\">SignUp</button></form></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
