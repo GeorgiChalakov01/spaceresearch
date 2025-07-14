@@ -2,6 +2,7 @@ package main
 
 
 import (
+	"os"
 	"fmt"
 	"net/http"
 	"github.com/a-h/templ"
@@ -32,6 +33,7 @@ func main() {
 		templ.Handler(home.Home()).ServeHTTP(w, r)
 	}))
 
-	fmt.Println("Serving application on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	port := os.Getenv("BACKEND_PORT")
+	fmt.Printf("Serving application on port %s ...\n", port)
+	http.ListenAndServe(":" + port, nil)
 }

@@ -8,6 +8,20 @@ services:
       - net
     ports:
       - "8080:8080"
+
+
+  database:
+    image: spaceresearch-postgres
+    env_file:
+      - ./vars.env
+    networks:
+      - spaceresearch_net
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+
+
 networks:
   spaceresearch_net:
     external: false
