@@ -118,3 +118,19 @@ func GetUserData(conn *pgx.Conn, email string) (User, error) {
 	}
 	return user, nil
 }
+
+type Document struct {
+	ID		int
+	UserID		int
+	FileName	string
+	ObjectName	string
+	BucketName	string
+	UploadedAt	time.Time
+}
+
+func InsertDocument(conn *pgx.Conn, document Document) error {
+	_, err := conn.Exec(context.Background(),
+		"INSERT INTO uploaded_documents (user_id, file_name, object_name, bucket_name, uploaded_at) VALUES ($1, $2, $3, $4, $5)",
+		document.UserID, document.FileName, document.ObjectName, document.BucketName, document.UploadedAt)
+	return err
+}
