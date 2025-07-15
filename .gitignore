@@ -1,3 +1,4 @@
 pg_data/
 minio_data/
 backend/app/app
+*_templ.go
