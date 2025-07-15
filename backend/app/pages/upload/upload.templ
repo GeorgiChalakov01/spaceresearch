@@ -1,0 +1,14 @@
+package upload
+
+import (
+	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
+	"github.com/GeorgiChalakov01/spaceresearch/pages/upload/components/form"
+)
+
+templ uploadContent() {
+	@form.Form()
+}
+
+templ Upload() {
+	@base.Base("Upload", uploadContent())
+}

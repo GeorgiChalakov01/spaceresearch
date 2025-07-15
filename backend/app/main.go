@@ -11,8 +11,10 @@ import (
 	"github.com/GeorgiChalakov01/spaceresearch/pages/signup"
 	"github.com/GeorgiChalakov01/spaceresearch/pages/signin"
 	"github.com/GeorgiChalakov01/spaceresearch/pages/home"
+	"github.com/GeorgiChalakov01/spaceresearch/pages/upload"
 	"github.com/GeorgiChalakov01/spaceresearch/core/handlers"
 	"github.com/GeorgiChalakov01/spaceresearch/core/auth"
+	coreUpload "github.com/GeorgiChalakov01/spaceresearch/core/upload"
 )
 
 func main() {
@@ -22,17 +24,17 @@ func main() {
 		templ.Handler(err.Error()).ServeHTTP(w, r)
 	})
 
-	http.HandleFunc("/signup", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request){
+	http.HandleFunc("/signup", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
 		templ.Handler(signup.SignUp()).ServeHTTP(w, r)
 	}))
-	http.HandleFunc("/process-signup", handlers.WithDB(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
+	http.HandleFunc("/process-signup", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
 		auth.ProcessSignUp(w, r, conn)
 	}))
 
-	http.HandleFunc("/signin", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request){
+	http.HandleFunc("/signin", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
 		templ.Handler(signin.SignIn()).ServeHTTP(w, r)
 	}))
-	http.HandleFunc("/process-signin", handlers.WithDB(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
+	http.HandleFunc("/process-signin", handlers.WithOutAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
 		auth.ProcessSignIn(w, r, conn)
 	}))
 
@@ -42,6 +44,13 @@ func main() {
 
 	http.HandleFunc("/home", handlers.WithAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
 		templ.Handler(home.Home()).ServeHTTP(w, r)
+	}))
+
+	http.HandleFunc("/upload", handlers.WithAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
+		templ.Handler(upload.Upload()).ServeHTTP(w, r)
+	}))
+	http.HandleFunc("/process-upload", handlers.WithAuthentication(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn){
+		coreUpload.ProcessUpload(w, r, conn)
 	}))
 
 	port := os.Getenv("BACKEND_PORT")

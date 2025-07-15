@@ -12,6 +12,15 @@ CREATE TABLE users (
 	isAdmin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+CREATE TABLE uploaded_documents(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    file_name TEXT NOT NULL,
+    object_name TEXT NOT NULL,
+    bucket_name TEXT NOT NULL,
+    uploaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- CREATE TABLE chunks (
 --     id SERIAL PRIMARY KEY,
 --     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

@@ -45,10 +45,10 @@ func WithAuthentication(handler func(w http.ResponseWriter, r *http.Request, con
 	})
 }
 
-func WithOutAuthentication(handler func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+func WithOutAuthentication(handler func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn)) http.HandlerFunc {
 	return WithDB(func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		if err := sessionCookieValid(conn, r); err != nil {
-			handler(w, r)
+			handler(w, r, conn)
 		} else {
 			http.Redirect(w, r, "/home?error=authenticationError", http.StatusSeeOther)
 			return

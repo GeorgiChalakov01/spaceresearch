@@ -23,7 +23,7 @@ services:
 
 
   objectstorage:
-    image: gminio
+    image: spaceresearch-objectstorage
     env_file:
       - ./vars.env
     networks:

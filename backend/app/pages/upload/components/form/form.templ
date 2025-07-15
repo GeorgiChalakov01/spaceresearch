@@ -1,0 +1,20 @@
+package form
+
+import (
+)
+
+templ Form() {
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-7">
+			<div class="mb-3">
+				<form action="/process-upload" method="POST" enctype="multipart/form-data">
+					<label for="File" class="form-label">Upload documents in PDF format.</label>
+					<input class="form-control" name="files" type="file" id="File" accept=".pdf" multiple>
+					<button type="submit" class="btn btn-primary">Upload</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+}
