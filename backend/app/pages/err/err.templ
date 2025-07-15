@@ -5,6 +5,10 @@ import (
 	"github.com/GeorgiChalakov01/spaceresearch/pages/err/components/message"
 )
 
+templ errorContent() {
+	@message.Message()
+}
+
 templ Error() {
-	@base.Base("Error", message.Message())
+	@base.Base("Error", errorContent())
 }

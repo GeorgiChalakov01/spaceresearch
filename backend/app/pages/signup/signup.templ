@@ -5,6 +5,10 @@ import (
 	"github.com/GeorgiChalakov01/spaceresearch/pages/signup/components/form"
 )
 
+templ signupContent() {
+	@form.Form()
+}
+
 templ SignUp() {
-	@base.Base("SignUp", form.Form())
+	@base.Base("SignUp", signupContent())
 }

@@ -3,8 +3,14 @@ package home
 import (
 	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
 	"github.com/GeorgiChalakov01/spaceresearch/pages/home/components/welcome"
+	"github.com/GeorgiChalakov01/spaceresearch/pages/home/components/options"
 )
 
+templ homeContent() {
+	@welcome.Welcome()
+	@options.Options()
+}
+
 templ Home() {
-	@base.Base("Home", welcome.Welcome())
+	@base.Base("Home", homeContent())
 }
