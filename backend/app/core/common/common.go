@@ -83,15 +83,6 @@ func GenerateAndSetTokens(w http.ResponseWriter, user *User) error {
 	return nil
 }
 
-func GetCookieValue(r *http.Request, cookieName string) string {
-	cookie, err := r.Cookie(cookieName)
-	if err != nil {
-		fmt.Printf("Could not take the value of cookie (%s). %v", cookieName, err)
-		return ""
-	}
-	return cookie.Value
-}
-
 func UpdateUserTokens(conn *pgx.Conn, user User) error {
 	// Start a transaction
 	tx, err := conn.Begin(context.Background())

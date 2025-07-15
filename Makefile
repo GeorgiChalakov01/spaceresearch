@@ -1,4 +1,4 @@
-.PHONY: clear backend backend-logs database database-logs all up down restart
+.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs all up down restart
 
 clear:
 	@clear
@@ -24,6 +24,16 @@ database:
 
 database-logs:
 	@docker logs --follow spaceresearch-database-1
+
+objectstorage:
+	@echo "=== ObjectStorage ==="
+	@echo "Building image..."
+	@cd objectstorage && docker buildx build -t spaceresearch-objectstorage .
+	@echo "Recreating container..."
+	@docker compose up -d --no-deps --force-recreate objectstorage
+
+objectstorage-logs:
+	@docker logs --follow spaceresearch-objectstorage-1
 
 up:
 	docker compose up -d

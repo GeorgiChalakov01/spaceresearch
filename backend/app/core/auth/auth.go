@@ -67,6 +67,7 @@ func ProcessSignUp(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	if err != nil {
 		fmt.Printf("Couldn't hash password.")
 		http.Redirect(w, r, "/err?error=hashingError", http.StatusSeeOther)
+		return
 	}
 
 	if err := common.GenerateAndSetTokens(w, &user); err != nil {
@@ -77,6 +78,7 @@ func ProcessSignUp(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	if err := createUser(conn, user); err != nil {
 		fmt.Printf("Couldn't create a user.")
 		http.Redirect(w, r, "/err?error=createUserError", http.StatusSeeOther)
+		return
 	}
 
 	fmt.Printf("Successfully created account for %s and set cookies.\n", user.Email)
@@ -89,13 +91,6 @@ func ProcessSignIn(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		Email:    r.FormValue("email"),
 		Password: r.FormValue("password"),
 	}
-	var err error
-	user.PasswordHash, err = hashPassword(user.Password)
-	if err != nil {
-		fmt.Printf("Couldn't hash password.")
-		http.Redirect(w, r, "/err?error=hashingError", http.StatusSeeOther)
-	}
-
 	if err := validation.ValidateEmail(user.Email); err != nil {
 		http.Redirect(w, r, "/signin?error=emailNotValid", http.StatusSeeOther)
 		return
@@ -107,7 +102,7 @@ func ProcessSignIn(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		return
 	}
 
-	if checkPasswordHash(user.Password, userDB.PasswordHash) {
+	if !checkPasswordHash(user.Password, userDB.PasswordHash) {
 		http.Redirect(w, r, "/signin?error=wrongPassword", http.StatusSeeOther)
 		return
 	}
@@ -122,15 +117,20 @@ func ProcessSignIn(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		return
 	}
 
-	fmt.Printf("Successfully created account for %s and set cookies.\n", user.Email)
 	http.Redirect(w, r, "/home?success=welcomeBack", http.StatusSeeOther)
 	return
 }
 
 func ProcessSignOut(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
-	user := common.User {
-		Email: common.GetCookieValue(r, "user_email"),
-	}
+	var user common.User	
+        cookie, err := r.Cookie("user_email")
+        if err != nil {
+                fmt.Printf("Could not take the value of cookie (user_email). Error:\n%v", err)
+		http.Redirect(w, r, "/err?error=emailCookieReading", http.StatusSeeOther)
+                return
+        }
+	user.Email = cookie.Value
+
 	// Clear cookies
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
