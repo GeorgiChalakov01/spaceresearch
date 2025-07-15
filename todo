@@ -1,0 +1,5 @@
+- Add CSRF protection for all forms.
+- Make it possible to upload (PDF) files in MinIO.
+- Add a RabbidMQ instance to queue the processing of the pdf files.
+- Add an Ollama container with a vision model.
+- Add a new container to process the queued document transcription using a VLM.
