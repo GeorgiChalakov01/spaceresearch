@@ -82,3 +82,48 @@ func GenerateAndSetTokens(w http.ResponseWriter, user *User) error {
 
 	return nil
 }
+
+func GetCookieValue(r *http.Request, cookieName string) string {
+	cookie, err := r.Cookie(cookieName)
+	if err != nil {
+		fmt.Printf("Could not take the value of cookie (%s). %v", cookieName, err)
+		return ""
+	}
+	return cookie.Value
+}
+
+func UpdateUserTokens(conn *pgx.Conn, user User) error {
+	// Start a transaction
+	tx, err := conn.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	// Rollback is safe to call even if the tx is already closed, so if
+	// the tx commits successfully, this is a no-op
+	defer tx.Rollback(context.Background())
+
+	_, err = tx.Exec(context.Background(), "UPDATE users SET sessionToken = $1, csrfToken = $2 WHERE email = $3", user.SessionToken, user.CSRFToken, user.Email)
+
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetUserData(conn *pgx.Conn, email string) (User, error) {
+	var user User
+	err := conn.QueryRow(
+		context.Background(),
+		"SELECT id, name, email, passwordHash, sessionToken, csrfToken, isAdmin FROM users WHERE email=$1", email).Scan(
+			&user.Id, &user.Name, &user.Email, &user.PasswordHash, &user.SessionToken, &user.CSRFToken, &user.IsAdmin)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
