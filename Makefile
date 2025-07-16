@@ -1,4 +1,4 @@
-.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs all up down restart
+.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs messagebroker messagebroker-logs all up down restart
 
 clear:
 	@clear
@@ -34,6 +34,14 @@ objectstorage:
 
 objectstorage-logs:
 	@docker logs --follow spaceresearch-objectstorage-1
+
+messagebroker:
+	@echo "=== MessageBroker ==="
+	@echo "Recreating container..."
+	@docker compose up -d --no-deps --force-recreate messagebroker
+
+messagebroker-logs:
+	@docker logs --follow spaceresearch-messagebroker-1
 
 up:
 	docker compose up -d

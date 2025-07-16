@@ -8,11 +8,15 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"encoding/json"
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/GeorgiChalakov01/spaceresearch/core/common"
+	amqp "github.com/rabbitmq/amqp091-go"
+
 	"github.com/GeorgiChalakov01/spaceresearch/core/minio"
+	"github.com/GeorgiChalakov01/spaceresearch/core/common"
+	"github.com/GeorgiChalakov01/spaceresearch/core/rabbitmq"
 )
 
 func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
@@ -48,7 +52,7 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	files := r.MultipartForm.File["files"]
 	bucketName := "documents"
 
-	documents := []common.Document{}
+	var uploadError bool
 	for _, fileHeader := range files {
 		var currentDocument common.Document
 		// Open file
@@ -83,14 +87,9 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		// Upload to MinIO
 		ctx := context.Background()
 		if err := minio.UploadFile(ctx, minioClient, bucketName, objectName, tempFilePath, "application/pdf"); err != nil {
-			fmt.Printf("Error uploading file to MinIO: %v", err)
+			fmt.Printf("Error uploading file [%s] to MinIO: %v", objectName, err)
+			uploadError = true
 
-			// If a file could not be uploaded delete all which the user tried to upload.
-			for _, docToBeDeleted := range documents {
-				minio.DeleteFile(ctx, minioClient, docToBeDeleted.BucketName, docToBeDeleted.ObjectName)
-				common.DeleteDocumentByID(conn, docToBeDeleted.ID)
-				http.Redirect(w, r, "/upload?error=uploadErrorOneOrMoreDoc", http.StatusSeeOther)
-			}
 			return
 		}
 
@@ -110,24 +109,82 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		id, err := common.InsertDocument(conn, documentRecord)
 		if err != nil {
 			fmt.Printf("Error storing the uploaded file's metadata in the DB: %v", err)
+			uploadError = true
+			// Delete the uploaded file from MinIO as metadata for it was not stored.
 			minio.DeleteFile(ctx, minioClient, currentDocument.BucketName, currentDocument.ObjectName)
-
-			// If a file could not be uploaded delete all which the user tried to upload.
-			for _, docToBeDeleted := range documents {
-				minio.DeleteFile(ctx, minioClient, docToBeDeleted.BucketName, docToBeDeleted.ObjectName)
-				common.DeleteDocumentByID(conn, docToBeDeleted.ID)
-				http.Redirect(w, r, "/upload?error=uploadDBErrorOneOrMoreDoc", http.StatusSeeOther)
-			}
 			return
 		}
 
 		currentDocument.ID = id
 
-		documents = append(documents, currentDocument)
+		// Connect to RabbitMQ
+		conn, err := rabbitmq.Connect()
+		if err != nil {
+			fmt.Println("Could not connect to RabbitMQ. Error:\n%v", err)
+			http.Redirect(w, r, "/err?error=rabbitmqConnectionError", http.StatusSeeOther)
+			return
+		}
+		defer conn.Close()
 
-		// Create RabbitMQ task (placeholder)
-		// rabbitmq.PublishProcessingTask(objectName)
+		// Create a RabbitMQ channel
+		ch, err := conn.Channel()
+		if err != nil {
+			fmt.Printf("\nCould not create a RabbitMQ channel. Error:\n%v\n", err)
+			http.Redirect(w, r, "/err?error=rabbitmqCreateChannelError", http.StatusSeeOther)
+			return
+		}
+		defer ch.Close()
+
+		// Create a RabbitMQ queue
+		q, err := ch.QueueDeclare(
+			"documents",	// name
+			true,		// durable
+			false,		// delete when unused
+			false,		// exclusive
+			false,		// no-wait
+			nil,		// arguments
+		)
+		if err != nil {
+			fmt.Printf("\nCould not create a RabbitMQ queue. Error:\n%v\n", err)
+			http.Redirect(w, r, "/err?error=rabbitmqCreateQueueError", http.StatusSeeOther)
+			return
+		}
+
+		
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// JSON-ify the current document object
+		body, err := json.Marshal(currentDocument)
+		if err != nil {
+			fmt.Printf("\nCould not create a RabbitMQ queue. Error:\n%v\n", err)
+			http.Redirect(w, r, "/err?error=rabbitmqCreateQueueError", http.StatusSeeOther)
+			return
+		}
+		
+		err = ch.PublishWithContext(ctx,
+			"",		// exchange
+			q.Name,		// routing key
+			false,		// mandatory
+			false,		// immediate
+			amqp.Publishing {
+				ContentType:	"application/json",
+				Body:		body,
+		})
+		if err != nil {
+			fmt.Printf("\nCould not publish message to RabbitMQ queue. Error:\n%v\n", err)
+			http.Redirect(w, r, "/err?error=rabbitmqCreateQueueError", http.StatusSeeOther)
+			return
+		}
+
+		fmt.Printf("\nPublished a message [%s] to queue [%s]\n", body, q.Name)
+	}
+	var msg string
+	if uploadError {
+		msg = "error=uploadFailedForOneOrMoreFiles"
+	} else {
+		msg = "success=uploadSuccessful"
 	}
 
-	http.Redirect(w, r, "/home?success=uploadSuccess", http.StatusSeeOther)
+	http.Redirect(w, r, "/home?" + msg, http.StatusSeeOther)
 }

@@ -10,7 +10,10 @@ import (
 )
 
 func NewMinioClient() (*minio.Client, error) {
-	endpoint := os.Getenv("MINIO_ENDPOINT")
+	containerName := os.Getenv("MINIO_CONTAINER_NAME")
+	port := os.Getenv("MINIO_PORT")
+	endpoint := containerName + ":" + port
+
 	accessKeyID := os.Getenv("MINIO_ROOT_USER")
 	secretAccessKey := os.Getenv("MINIO_ROOT_PASSWORD")
 	useSSL := false
