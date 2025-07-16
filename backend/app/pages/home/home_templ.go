@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/home/components/options"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/home/components/welcome"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/base"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/home/components/options"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/home/components/welcome"
 )
 
 func homeContent() templ.Component {

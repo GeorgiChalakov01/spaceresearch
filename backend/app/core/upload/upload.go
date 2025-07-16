@@ -14,9 +14,9 @@ import (
 
 	amqp "github.com/rabbitmq/amqp091-go"
 
-	"github.com/GeorgiChalakov01/spaceresearch/core/minio"
-	"github.com/GeorgiChalakov01/spaceresearch/core/common"
-	"github.com/GeorgiChalakov01/spaceresearch/core/rabbitmq"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/minio"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/common"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/rabbitmq"
 )
 
 func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {

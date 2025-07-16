@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/err/components/message"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/base"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/err/components/message"
 )
 
 func errorContent() templ.Component {

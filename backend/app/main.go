@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"github.com/a-h/templ"
 	"github.com/jackc/pgx/v5"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/err"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/signup"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/signin"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/home"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/upload"
-	"github.com/GeorgiChalakov01/spaceresearch/core/handlers"
-	"github.com/GeorgiChalakov01/spaceresearch/core/auth"
-	coreUpload "github.com/GeorgiChalakov01/spaceresearch/core/upload"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/err"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/signup"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/signin"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/home"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/upload"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/handlers"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/auth"
+	coreUpload "github.com/GeorgiChalakov01/spaceresearch/backend/app/core/upload"
 )
 
 func main() {

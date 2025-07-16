@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GeorgiChalakov01/spaceresearch/pages/base"
-	"github.com/GeorgiChalakov01/spaceresearch/pages/signup/components/form"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/base"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/signup/components/form"
 )
 
 func signupContent() templ.Component {

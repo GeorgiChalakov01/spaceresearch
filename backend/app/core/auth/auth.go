@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/GeorgiChalakov01/spaceresearch/core/common"
-	"github.com/GeorgiChalakov01/spaceresearch/core/validation"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/common"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/validation"
 )
 
 func hashPassword(password string) (string, error) {

@@ -7,7 +7,7 @@ import (
 	"context"
 	"net/http"
 	"github.com/jackc/pgx/v5"
-	"github.com/GeorgiChalakov01/spaceresearch/core/common"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/common"
 )
 
 func sessionCookieValid(conn *pgx.Conn, r *http.Request) error {

@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/GeorgiChalakov01/spaceresearch/pages/base/navbar"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/pages/base/navbar"
 )
 
 func Base(title string, content templ.Component) templ.Component {
