@@ -57,7 +57,8 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			fmt.Printf("\nReceived a message: %s\n", d.Body)
+			fmt.Printf("\nProcessing: %s\n", d.Body)
+			ProcessDocument(d.Body)
 		}
 	}()
 
