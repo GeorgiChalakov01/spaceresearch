@@ -1,4 +1,4 @@
-.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs messagebroker messagebroker-logs all up down restart
+.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs messagebroker messagebroker-logs documentprocessor documentprocessor-logs all up down restart
 
 clear:
 	@clear
@@ -42,6 +42,18 @@ messagebroker:
 
 messagebroker-logs:
 	@docker logs --follow spaceresearch-messagebroker-1
+
+documentprocessor:
+	@echo "=== DocProc ==="
+	@echo "Compiling source code..."
+	@cd documentprocessor/src && make compile
+	@echo "Building image..."
+	@cd documentprocessor && docker buildx build -t spaceresearch-documentprocessor .
+	@echo "Recreating container..."
+	@docker compose up -d --no-deps --force-recreate documentprocessor
+
+documentprocessor-logs:
+	@docker logs --follow spaceresearch-documentprocessor-1
 
 up:
 	docker compose up -d

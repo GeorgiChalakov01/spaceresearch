@@ -46,6 +46,14 @@ services:
       - "15672:15672"
 
 
+  documentprocessor:
+    image: spaceresearch-documentprocessor
+    env_file:
+      - ./vars.env
+    networks:
+      - spaceresearch_net
+
+
 networks:
   spaceresearch_net:
     external: false
