@@ -33,3 +33,7 @@ func UploadFile(ctx context.Context, minioClient *minio.Client, bucketName strin
 	})
 	return err
 }
+
+func DeleteFile(ctx context.Context, minioClient *minio.Client, bucketName, objectName string) error {
+	return minioClient.RemoveObject(ctx, bucketName, objectName, minio.RemoveObjectOptions{})
+}

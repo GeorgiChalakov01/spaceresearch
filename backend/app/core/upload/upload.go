@@ -48,7 +48,9 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	files := r.MultipartForm.File["files"]
 	bucketName := "documents"
 
+	documents := []common.Document{}
 	for _, fileHeader := range files {
+		var currentDocument common.Document
 		// Open file
 		file, err := fileHeader.Open()
 		if err != nil {
@@ -82,11 +84,20 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		ctx := context.Background()
 		if err := minio.UploadFile(ctx, minioClient, bucketName, objectName, tempFilePath, "application/pdf"); err != nil {
 			fmt.Printf("Error uploading file to MinIO: %v", err)
-			http.Error(w, "Error uploading file", http.StatusInternalServerError)
+
+			// If a file could not be uploaded delete all which the user tried to upload.
+			for _, docToBeDeleted := range documents {
+				minio.DeleteFile(ctx, minioClient, docToBeDeleted.BucketName, docToBeDeleted.ObjectName)
+				common.DeleteDocumentByID(conn, docToBeDeleted.ID)
+				http.Redirect(w, r, "/upload?error=uploadErrorOneOrMoreDoc", http.StatusSeeOther)
+			}
 			return
 		}
 
 		fmt.Printf("Successfully uploaded %s to bucket %s", objectName, bucketName)
+
+		currentDocument.ObjectName = objectName
+		currentDocument.BucketName = bucketName
 
 		// Add record to database
 		documentRecord := common.Document{
@@ -96,12 +107,23 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 			BucketName:	bucketName,
 			UploadedAt:	time.Now(),
 		}
-		if err := common.InsertDocument(conn, documentRecord); err != nil {
-			fmt.Printf("Error inserting document record: %v", err)
-			// delete other files which uploaded succesfully both from minio and from the db if even one fails.
-			http.Redirect(w, r, "/upload?error=documentUploadDBError", http.StatusSeeOther)
+		id, err := common.InsertDocument(conn, documentRecord)
+		if err != nil {
+			fmt.Printf("Error storing the uploaded file's metadata in the DB: %v", err)
+			minio.DeleteFile(ctx, minioClient, currentDocument.BucketName, currentDocument.ObjectName)
+
+			// If a file could not be uploaded delete all which the user tried to upload.
+			for _, docToBeDeleted := range documents {
+				minio.DeleteFile(ctx, minioClient, docToBeDeleted.BucketName, docToBeDeleted.ObjectName)
+				common.DeleteDocumentByID(conn, docToBeDeleted.ID)
+				http.Redirect(w, r, "/upload?error=uploadDBErrorOneOrMoreDoc", http.StatusSeeOther)
+			}
 			return
 		}
+
+		currentDocument.ID = id
+
+		documents = append(documents, currentDocument)
 
 		// Create RabbitMQ task (placeholder)
 		// rabbitmq.PublishProcessingTask(objectName)

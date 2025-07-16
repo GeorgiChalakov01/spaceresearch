@@ -35,6 +35,17 @@ services:
       - ./minio_data:/data
 
 
+  messagebroker:
+    image: rabbitmq:management-alpine
+    env_file:
+      - ./vars.env
+    networks:
+      - spaceresearch_net
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
 networks:
   spaceresearch_net:
     external: false
