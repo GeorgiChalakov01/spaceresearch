@@ -96,7 +96,7 @@ func ProcessSignIn(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		return
 	}
 
-	userDB, err := common.GetUserData(conn, user.Email)
+	userDB, err := common.GetUserDataByEmail(conn, user.Email)
 	if err != nil {
 		http.Redirect(w, r, "/signin?error=emailNotFound", http.StatusSeeOther)
 		return

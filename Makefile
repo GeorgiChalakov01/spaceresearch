@@ -1,4 +1,4 @@
-.PHONY: clear backend backend-logs database database-logs objectstorage objectstorage-logs messagebroker messagebroker-logs documentprocessor documentprocessor-logs all up down restart
+.PHONY: clear backend backend-logs database database-logs database-connect objectstorage objectstorage-logs messagebroker messagebroker-logs documentprocessor documentprocessor-logs all up down restart
 
 clear:
 	@clear
@@ -25,6 +25,9 @@ database:
 database-logs:
 	@docker logs --follow spaceresearch-database-1
 
+database-connect:
+	@docker exec -it spaceresearch-database-1 psql -h localhost -U changeme -d app
+
 objectstorage:
 	@echo "=== ObjectStorage ==="
 	@echo "Building image..."
@@ -44,7 +47,7 @@ messagebroker-logs:
 	@docker logs --follow spaceresearch-messagebroker-1
 
 documentprocessor:
-	@echo "=== DocProc ==="
+	@echo "=== DocumentProcessor ==="
 	@echo "Compiling source code..."
 	@cd documentprocessor/src && make compile
 	@echo "Building image..."

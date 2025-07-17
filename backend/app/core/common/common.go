@@ -107,7 +107,19 @@ func UpdateUserTokens(conn *pgx.Conn, user User) error {
 	return nil
 }
 
-func GetUserData(conn *pgx.Conn, email string) (User, error) {
+func GetUserDataByID(conn *pgx.Conn, id int) (User, error) {
+	var user User
+	err := conn.QueryRow(
+		context.Background(),
+		"SELECT id, name, email, passwordHash, sessionToken, csrfToken, isAdmin FROM users WHERE id=$1", id).Scan(
+			&user.Id, &user.Name, &user.Email, &user.PasswordHash, &user.SessionToken, &user.CSRFToken, &user.IsAdmin)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func GetUserDataByEmail(conn *pgx.Conn, email string) (User, error) {
 	var user User
 	err := conn.QueryRow(
 		context.Background(),
@@ -160,3 +172,8 @@ func DeleteDocumentByID(conn *pgx.Conn, id int) (error) {
 	)
 	return err
 }
+
+// func GetCookieValue(r, key string) (string, error) {
+// 	value, err := r.Cookie(key)
+// 	return value, err
+// }

@@ -2,6 +2,7 @@ package ollama
 
 import (
 	"bytes"
+	"time"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -91,4 +92,58 @@ func CallOllama(model, prompt string, imageBase64 string) (<-chan string, <-chan
 	}()
 
 	return tokenChan, errChan
+}
+
+func GetEmbedding(text string) ([]float32, error) {
+	model := os.Getenv("OLLAMA_EMBEDDING_MODEL")
+	if model == "" {
+		model = "nomic-embed-text"
+	}
+	
+	apiURL := os.Getenv("OLLAMA_EMBEDDING_ENDPOINT")
+	if apiURL == "" {
+		apiURL = "http://localhost:11434/api/embeddings"
+	}
+
+	// Create request payload
+	payload := map[string]string{
+		"model":  model,
+		"prompt": text,
+	}
+	
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling JSON: %w", err)
+	}
+
+	// Create HTTP request
+	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send request with timeout
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error sending request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Check for successful response
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("API error [%d]: %s", resp.StatusCode, string(body))
+	}
+
+	// Parse response
+	var embeddingResp struct {
+		Embedding []float32 `json:"embedding"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&embeddingResp); err != nil {
+		return nil, fmt.Errorf("error decoding response: %w", err)
+	}
+
+	return embeddingResp.Embedding, nil
 }

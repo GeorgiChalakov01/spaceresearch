@@ -35,7 +35,7 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 	}
 	email := cookie.Value
 
-	user, err := common.GetUserData(conn, email)
+	user, err := common.GetUserDataByEmail(conn, email)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusInternalServerError)
 		return
@@ -116,6 +116,7 @@ func ProcessUpload(w http.ResponseWriter, r *http.Request, conn *pgx.Conn) {
 		}
 
 		currentDocument.ID = id
+		currentDocument.UserID = user.Id
 
 		// Connect to RabbitMQ
 		conn, err := rabbitmq.Connect()

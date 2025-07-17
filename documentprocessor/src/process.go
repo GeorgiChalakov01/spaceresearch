@@ -8,6 +8,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pgvector/pgvector-go"
+
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/db"
 	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/ollama"
 	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/common"
 	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/minio"
@@ -110,5 +113,37 @@ func ProcessDocument(details []byte) {
 		chunk += explanationOfVisuals + "\n"
 		chunk += "********************\n"
 		fmt.Println(chunk)
+		
+
+		// Generate Embedding
+		fmt.Println("Generating embedding...")
+		embeddingFA, err := ollama.GetEmbedding(chunk)
+		if err != nil {
+			fmt.Printf("Could not generate embedding. Error:\n%v\n", err)
+			return
+		}
+		embedding := pgvector.NewVector(embeddingFA)
+
+		// Connect to db
+		conn, err := db.Connect()
+		if err != nil {
+			fmt.Printf("Could not connect to DB. Error:\n%v\n", err)
+			return
+		}
+		defer conn.Close(context.Background())
+		
+		// Build the record
+		record := db.ChunkRecord {
+			Document: document,
+			PageNumber: page.PageNumber,
+			OriginalText: chunk,
+			Embedding: embedding,
+		}
+
+		// Insert record in the Chunks table
+		err = db.InsertChunk(conn, record)
+		if err != nil {
+			fmt.Printf("Error storing the chunk in the database.Error:\n%v\n", err)
+		}
 	}
 }

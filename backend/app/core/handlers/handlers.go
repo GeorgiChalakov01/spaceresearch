@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"os"
 	"fmt"
 	"errors"
 	"context"
 	"net/http"
 	"github.com/jackc/pgx/v5"
 	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/common"
+	"github.com/GeorgiChalakov01/spaceresearch/backend/app/core/db"
 )
 
 func sessionCookieValid(conn *pgx.Conn, r *http.Request) error {
@@ -19,7 +19,7 @@ func sessionCookieValid(conn *pgx.Conn, r *http.Request) error {
 	email := cookie.Value
 
 
-	user, err := common.GetUserData(conn, email)
+	user, err := common.GetUserDataByEmail(conn, email)
 	if err != nil {
 		return AuthError
 	}
@@ -58,17 +58,7 @@ func WithOutAuthentication(handler func(w http.ResponseWriter, r *http.Request, 
 
 func WithDB(handler func(w http.ResponseWriter, r *http.Request, conn *pgx.Conn)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		containerName := os.Getenv("POSTGRES_CONTAINER_NAME")
-		port := os.Getenv("POSTGRES_PORT")
-
-		user := os.Getenv("POSTGRES_USER")
-		pass := os.Getenv("POSTGRES_PASSWORD")
-		schema := os.Getenv("POSTGRES_DB")
-
-		url := "postgres://" + user + ":" + pass + "@" + containerName + ":" + port + "/" + schema
-
-		conn, err := pgx.Connect(context.Background(), url)
-
+		conn, err := db.Connect()
 		if err != nil {
 			fmt.Println(err)
 			http.Redirect(w, r, "/err?error=databaseError", http.StatusSeeOther)
