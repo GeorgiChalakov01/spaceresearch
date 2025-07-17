@@ -1,6 +1,7 @@
 services:
   backend:
     image: spaceresearch
+    restart: unless-stopped
     env_file:
       - ./vars.env
     networks:
@@ -12,6 +13,7 @@ services:
 
   database:
     image: spaceresearch-postgres
+    restart: unless-stopped
     env_file:
       - ./vars.env
     networks:
@@ -24,6 +26,7 @@ services:
 
   objectstorage:
     image: spaceresearch-objectstorage
+    restart: unless-stopped
     env_file:
       - ./vars.env
     networks:
@@ -37,6 +40,7 @@ services:
 
   messagebroker:
     image: rabbitmq:management-alpine
+    restart: unless-stopped
     env_file:
       - ./vars.env
     networks:
@@ -48,10 +52,22 @@ services:
 
   documentprocessor:
     image: spaceresearch-documentprocessor
+    restart: unless-stopped
     env_file:
       - ./vars.env
     networks:
       - spaceresearch_net
+
+
+  # ollama:
+  #   image: ollama/ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   networks:
+  #     - spaceresearch_net
+  #   volumes:
+  #     - ollama_data:/root/.ollama
 
 
 networks:
