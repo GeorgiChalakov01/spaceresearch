@@ -2,8 +2,9 @@ package minio
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"os"
+	"io"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -23,7 +24,7 @@ func NewMinioClient() (*minio.Client, error) {
 		Secure: useSSL,
 	})
 	if err != nil {
-		log.Printf("Error creating MinIO client: %v", err)
+		fmt.Printf("Error creating MinIO client: %v", err)
 		return nil, err
 	}
 
@@ -39,4 +40,17 @@ func UploadFile(ctx context.Context, minioClient *minio.Client, bucketName strin
 
 func DeleteFile(ctx context.Context, minioClient *minio.Client, bucketName, objectName string) error {
 	return minioClient.RemoveObject(ctx, bucketName, objectName, minio.RemoveObjectOptions{})
+}
+
+
+func GetFileContent(ctx context.Context, minioClient *minio.Client, bucketName, objectName string) ([]byte, error) {
+	// Get object from MinIO
+	obj, err := minioClient.GetObject(ctx, bucketName, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	defer obj.Close()
+
+	// Read object content
+	return io.ReadAll(obj)
 }

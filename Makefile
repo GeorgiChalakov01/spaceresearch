@@ -55,6 +55,8 @@ documentprocessor:
 documentprocessor-logs:
 	@docker logs --follow spaceresearch-documentprocessor-1
 
+all: backend database objectstorage messagebroker documentprocessor
+
 up:
 	docker compose up -d
 
