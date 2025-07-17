@@ -50,7 +50,7 @@ func ProcessDocument(details []byte) {
 	}
 
 	// Get model from environment or use default
-	model := os.Getenv("OLLAMA_MODEL")
+	model := os.Getenv("OLLAMA_CHAT_MODEL")
 	if model == "" {
 		model = "gemma3:4b-it-qat" // Default model
 	}
